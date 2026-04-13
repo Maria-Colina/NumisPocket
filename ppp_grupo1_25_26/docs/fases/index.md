@@ -71,12 +71,27 @@ Salida esperada:
 
 - Se reproduce el comportamiento actual de [src/app/(tabs)/index.tsx](../../src/app/(tabs)/index.tsx).
 
+### Fase 5. Unificación Visual
+
+Objetivo: Refactorización completa para usar tokens centralizados en theme.ts
+
+Cambios principales:
+- Eliminación de colores hardcodeados (#2563EB, #F3F4F6, etc.)
+- Adopción de Colors, Typography, Spacing, Borders, Shadows del theme
+- Reemplazo de paleta aislada (colorPorIndice) con Colors.light.cardPalette
+- Unificación de tipografía con Typography scale
+- Estandarización de espaciado con Spacing tokens
+
+Resultado: Pantalla visualmente coherente con el resto de la app
+
+
 ## Archivos de versión
 
 - [index-fase-1.tsx](versiones/index-fase-1.tsx)
 - [index-fase-2.tsx](versiones/index-fase-2.tsx)
 - [index-fase-3.tsx](versiones/index-fase-3.tsx)
 - [index-fase-4.tsx](versiones/index-fase-4.tsx)
+- [index-fase-4.tsx](versiones/index-fase-5.tsx)
 
 ## Criterio de sustitución
 

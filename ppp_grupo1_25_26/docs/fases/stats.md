@@ -68,12 +68,42 @@ Salida esperada:
 
 - Se reproduce el comportamiento actual de [src/app/(tabs)/stats.tsx](../../src/app/(tabs)/stats.tsx).
 
+### Fase 5. Unificación Visual
+
+Objetivo: Refactorización completa para usar tokens centralizados, eliminando paleta aislada
+
+Cambios principales:
+- Header color: #F59E0B (amarillo aislado) → Colors.light.accent (#2563EB)
+- Eliminación de paleta de colores local en tipoChartData y barras
+- Adopción de Colors.light.chartPalette para gráficos coherentes
+- Unificación de colores de fondo, bordes y text con tema global
+- Reemplazo de Typography hardcodeada con escala centralizada
+- Estandarización de espaciado con Spacing tokens
+
+Token clave adoptados:
+- Colors.light.accent: header, accents (reemplaza #F59E0B)
+- Colors.light.accentLight: fondos suavizados, summary card
+- Colors.light.chartPalette: paleta unificada para gráficos [6 colores]
+- Colors.light.surface: tarjetas de estadísticas
+- Typography: heading1-2 para títulos, body para texto, caption para labels
+- Spacing: padding, margin, gap consistentes
+- Borders.radius.xs-lg: bordes unificados
+
+Cambios visuales:
+- Header de yellow (#F59E0B) a blue accent (#2563EB) → coherencia cross-screen
+- Colores de gráficos normalizados a chartPalette → viabilidad reuse en otras pantallas
+- Summary card: background #EDEFF8 + error color → Colors.light.accentLight + Colors.light.success
+
+Resultado: Pantalla "Stats" ya no se percibe como diseño independiente
+
+
 ## Archivos de versión
 
 - [stats-fase-1.tsx](versiones/stats-fase-1.tsx)
 - [stats-fase-2.tsx](versiones/stats-fase-2.tsx)
 - [stats-fase-3.tsx](versiones/stats-fase-3.tsx)
 - [stats-fase-4.tsx](versiones/stats-fase-4.tsx)
+- [stats-fase-4.tsx](versiones/stats-fase-5.tsx)
 
 ## Criterio de sustitución
 

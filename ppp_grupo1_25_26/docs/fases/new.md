@@ -72,12 +72,34 @@ Salida esperada:
 
 - Se reproduce el comportamiento actual de [src/app/(tabs)/new.tsx](../../src/app/(tabs)/new.tsx).
 
+### Fase 5. Unificación Visual
+
+Objetivo: Refactorización completa para usar tokens centralizados en theme.ts
+Cambios principales:
+- Unificación de header color: #2FC28B → Colors.light.accent (#2563EB)
+- Reemplazo de todos los colores hardcodeados con tokens de tema
+- Adopción de Typography scale para consistencia tipográfica
+- Estandarización de Spacing en todo el formulario
+- Uso de Borders para radius y widths consistentes
+- Unificación de colores de error: #F7DCDD + #A44D56 → Colors.light.errorLight + Colors.light.error
+
+Token clave adoptados:
+- Colors.light.accent: botones, headers, actions
+- Colors.light.surface: inputs, campos
+- Colors.light.error*/Colors.light.errorLight: acciones destructivas
+- Typography.heading2, Typography.body, Typography.label: jerarquía tipográfica
+- Spacing[4 a 36]: espaciado consistente
+- Borders.radius.lg, md, sm: bordes redondeados unificados
+
+Resultado: Pantalla cohesiva, sin paleta aislada de verdes
+
 ## Archivos de versión
 
 - [new-fase-1.tsx](versiones/new-fase-1.tsx)
 - [new-fase-2.tsx](versiones/new-fase-2.tsx)
 - [new-fase-3.tsx](versiones/new-fase-3.tsx)
 - [new-fase-4.tsx](versiones/new-fase-4.tsx)
+- [new-fase-4.tsx](versiones/new-fase-5.tsx)
 
 ## Criterio de sustitución
 
