@@ -1,0 +1,47 @@
+sequenceDiagram
+  autonumber
+  actor U as Usuario
+  participant F as Formulario Alta/Edición
+  participant IP as Expo ImagePicker
+  participant FS as Expo FileSystem
+  participant DB as SQLite (Drizzle)
+
+  U->>F: Abre "Nueva pieza" y completa campos
+  U->>F: Pulsa "Añadir foto"
+  F->>IP: Solicita permisos cámara/galería
+
+  alt Usuario concede permiso y selecciona imagen
+    IP-->>F: URI temporal
+    F->>FS: Copia archivo a documentDirectory
+    alt Copia correcta
+      FS-->>F: URI persistente
+      F-->>U: Vista previa de fotografía
+    else Error de copia
+      FS-->>F: Error de copia
+      F-->>U: Aviso y opción de reintentar
+    end
+  else Usuario deniega permiso o cancela selección
+    IP-->>F: Cancelado / sin imagen
+    F-->>U: Continúa alta sin fotografía
+  end
+
+  U->>F: Pulsa "Guardar"
+  F->>F: Validar campos obligatorios (tipo, título, año)
+  alt Validación correcta
+    F->>DB: INSERT en piezas (metadatos)
+    DB-->>F: id_pieza generado
+    alt Existe URI persistente
+      F->>DB: INSERT en fotos_pieza (id_pieza, uri_local)
+      DB-->>F: Confirmación OK
+    else Sin fotografía
+      F-->>F: Omitir inserción en fotos_pieza
+    end
+    F-->>U: Mensaje de éxito y retorno al listado
+  else Validación incorrecta
+    F-->>U: Mostrar errores en formulario
+  end
+
+  alt Error de base de datos
+    DB-->>F: Error al insertar
+    F-->>U: Aviso de error y opción de reintentar
+  end

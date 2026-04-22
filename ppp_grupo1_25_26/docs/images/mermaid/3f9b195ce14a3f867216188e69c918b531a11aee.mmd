@@ -1,0 +1,67 @@
+erDiagram
+  AJUSTES {
+    int id PK
+    text nombre_ajuste UK
+    text valor
+  }
+
+  COLECCIONES {
+    int id PK
+    text nombre
+    text descripcion
+    int fecha_creacion
+    int activa
+  }
+
+  ESTADOS_CONSERVACION {
+    int id PK
+    text codigo UK
+    text nombre
+    text descripcion
+    int orden
+    int activo
+  }
+
+  TIPOS_ITEMS {
+    int id PK
+    text codigo UK
+    text nombre
+    text descripcion
+    int orden
+    int activo
+  }
+
+  PIEZAS {
+    int id PK
+    int coleccion_id
+    text tipo
+    int tipo_item_id FK
+    text titulo
+    text pais
+    int anio
+    text catalogo_ref
+    text valor_facial
+    text material
+    int estado_conservacion_id FK
+    text rareza
+    int cantidad
+    int tiene_error
+    text observaciones
+    int fecha_alta
+    int fecha_actualizacion
+  }
+
+  FOTOS_PIEZA {
+    int id PK
+    int pieza_id
+    text uri_local
+    text origen
+    text descripcion
+    int es_principal
+    int fecha_captura
+  }
+
+  COLECCIONES ||--o{ PIEZAS : "coleccion_id (REL IMPLICITA)"
+  TIPOS_ITEMS ||--o{ PIEZAS : "tipo_item_id"
+  ESTADOS_CONSERVACION ||--o{ PIEZAS : "estado_conservacion_id"
+  PIEZAS ||--o{ FOTOS_PIEZA : "pieza_id (REL IMPLICITA)"

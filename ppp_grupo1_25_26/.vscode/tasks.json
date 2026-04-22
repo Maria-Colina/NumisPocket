@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Pandoc → PDF (Eisvogel)",
+      "type": "shell",
+      "command": "pandoc",
+      "args": [
+        "${fileBasename}",
+        "-o",
+        "pdf/${fileBasenameNoExtension}.pdf",
+        "--template=eisvogel",
+        "--pdf-engine=xelatex"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Pandoc → PDF (Eisvogel + Mermaid)",
+      "type": "shell",
+      "command": "zsh",
+      "args": [
+        "-lc",
+        "pandoc \"${fileBasename}\" -o \"pdf/${fileBasenameNoExtension}.pdf\" --template=eisvogel --pdf-engine=xelatex --lua-filter=filters/mermaid.lua; exit_code=$?; if [ -d images/mermaid ]; then find images/mermaid -type f \\( -name \"*.mmd\" -o -name \"*.png\" -o -name \"*.svg\" \\) -delete; fi; exit $exit_code"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Pandoc → PDF (Eisvogel + Mermaid, cache PNG)",
+      "type": "shell",
+      "command": "zsh",
+      "args": [
+        "-lc",
+        "pandoc \"${fileBasename}\" -o \"pdf/${fileBasenameNoExtension}.pdf\" --template=eisvogel --pdf-engine=xelatex --lua-filter=filters/mermaid.lua; exit_code=$?; if [ -d images/mermaid ]; then find images/mermaid -type f \\( -name \"*.mmd\" -o -name \"*.png\" -o -name \"*.svg\" \\) -delete; fi; exit $exit_code"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

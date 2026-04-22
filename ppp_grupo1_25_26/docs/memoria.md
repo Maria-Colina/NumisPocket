@@ -103,6 +103,7 @@ El desarrollo del sistema se ha llevado a cabo de forma progresiva mediante el u
 
 ### Fase 1: Estructura inicial del proyecto
 Durante esta fase se establece la base del sistema, definiendo la organización del repositorio, la estructura de carpetas y los primeros elementos de la interfaz.
+
 | Fecha      | Commit  | Autor                  | Descripción                  |
 | ---------- | ------- | ---------------------- | ---------------------------- |
 | 2026-03-29 | 90d7c32 | Daniel Artiles         | Inicio del proyecto          |
@@ -119,6 +120,7 @@ Durante esta fase se establece la base del sistema, definiendo la organización 
 ### Fase 2: Definición de arquitectura y base de datos
 
 En esta fase se desarrolla la arquitectura técnica del sistema y se integra la persistencia de datos mediante SQLite y Drizzle ORM.
+
 | Fecha      | Commit  | Autor                  | Descripción                |
 | ---------- | ------- | ---------------------- | -------------------------- |
 | 2026-04-04 | 7bd1b2c | Maria-Colina           | Arquitectura técnica       |
@@ -268,7 +270,29 @@ Conclusión: El proyecto presenta una desviación moderada, considerada aceptabl
 
 ## Casos de uso principales
 
-![Casos de uso principales cubiertos por el sistema.](./images/memoria_casos_uso.png){ width=95% }
+```{.mermaid caption="Casos de uso principales cubiertos por el sistema."}
+flowchart LR
+  U([Persona usuaria])
+
+  subgraph NP[NumisPocket]
+    UC1([Consultar colección])
+    UC2([Buscar y filtrar piezas])
+    UC3([Dar de alta pieza])
+    UC4([Editar pieza])
+    UC5([Eliminar pieza])
+    UC6([Asociar fotografía])
+    UC7([Visualizar estadísticas])
+  end
+
+  U --> UC1
+  U --> UC2
+  U --> UC3
+  U --> UC4
+  U --> UC5
+  U --> UC6
+  U --> UC7
+
+```
 
 La persona usuaria, representada en el diagrama, interactúa con NumisPocket de forma directa y sencilla. No existe complejidad multirol ni jerarquía de permisos porque la aplicación se concibe como una herramienta personal instalada en el dispositivo.
 
@@ -282,14 +306,43 @@ El uso de tarjetas, botones visibles y formularios lineales ayuda a reducir la c
 
 # Diagrama de navegación
 
-![Flujo de navegación principal entre pantallas y acciones auxiliares.](./images/memoria_navegacion.png){ width=95% }
+```{.mermaid caption="Diagrama de navegación principal de NumisPocket."}
+flowchart TD
+  A[Inicio de la app] --> B[Redirección inicial]
+  B --> C[(Tabs principales)]
+
+  subgraph T["Navegación principal"]
+    I[Inicio / listado]
+    N[Nueva pieza / edición]
+    S[Estadísticas]
+  end
+
+  C --> I
+  C --> N
+  C --> S
+
+  I -->|Abrir ficha| D[Detalle pieza]
+  I -->|Botón flotante| N
+  I -->|Pestaña inferior| S
+
+  D -->|router.replace| N
+
+  N -->|Guardar cambios| I
+  N -->|Cancelar o volver| I
+  N -->|Editar pieza existente| N
+
+  S -->|Volver a listado| I
+```
 
 ## Pantalla de listado y filtrado
 
 La pantalla de listado actúa como pantalla de inicio de la aplicación. Su finalidad es ofrecer acceso inmediato al inventario general sin obligar al usuario a navegar por menús intermedios. La vista se compone de un encabezado, un campo de búsqueda, filtros rápidos, una lista de tarjetas y un botón principal de alta.
 
 Cada tarjeta muestra información esencial de la pieza: título, país, año, valor facial, tipo y disponibilidad de fotografía. La información se presenta en formato compacto para permitir la revisión de varias piezas de un vistazo, pero manteniendo un nivel suficiente de detalle como para diferenciar registros sin necesidad de abrir cada ficha.
-Desde el punto de vista de experiencia de usuario, el filtro por tipo y por disponibilidad de imagen resulta especialmente útil. En una colección mediana, el usuario puede querer localizar rápidamente billetes, monedas o piezas que aún no están documentadas fotográficamente. Esta necesidad se consideró prioritaria porque conecta con uno de los objetivos prácticos del proyecto: utilizar la aplicación también como herramienta de revisión y mejora de la colección.
+
+Desde el punto de vista de experiencia de usuario, el filtro por tipo y por disponibilidad de imagen resulta especialmente útil. En una colección mediana, el usuario puede querer localizar rápidamente billetes, monedas o piezas que aún no están documentadas fotográficamente. 
+
+Esta necesidad se consideró prioritaria porque conecta con uno de los objetivos prácticos del proyecto: utilizar la aplicación también como herramienta de revisión y mejora de la colección.
 
 ```{=latex}
 \begin{figure}[htbp]
@@ -312,7 +365,49 @@ La pantalla de alta y edición concentra el núcleo del CRUD y, por ello, fue tr
 
 Se organizaron los campos en un orden lógico: primero identificación general de la pieza, después datos numismáticos específicos y, finalmente, observaciones y acciones relacionadas con la imagen. Esta organización reduce errores de introducción de datos y facilita la reutilización de la misma pantalla tanto para crear nuevas fichas como para editar piezas existentes.
 
+```{=latex}
+\begin{figure}[htbp]
+\centering
+\begin{minipage}[t]{0.24\textwidth}
+\centering
+\includegraphics[width=\linewidth]{./images/pantalla_alta_edicion_001.png}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.24\textwidth}
+\centering
+\includegraphics[width=\linewidth]{./images/pantalla_alta_edicion_002.png}
+\end{minipage}
+\begin{minipage}[t]{0.24\textwidth}
+\centering
+\includegraphics[width=\linewidth]{./images/pantalla_alta_edicion_003.png}
+\end{minipage}
+\begin{minipage}[t]{0.24\textwidth}
+\centering
+\includegraphics[width=\linewidth]{./images/pantalla_alta_edicion_004.png}
+\end{minipage}
+\caption{Pantalla de nuevo item y modales de Tipo de item y de Estado de conservación. Responsable principal: José Daniel Artiles González}
+\end{figure}
+```
+
 La eliminación de registros se integró con confirmación para evitar borrados accidentales. Asimismo, se aplicaron validaciones sobre campos imprescindibles, especialmente nombre o título, tipo y año, de manera que no pudieran guardarse registros manifiestamente incompletos o incoherentes.
+
+```{=latex}
+\begin{figure}[htbp]
+\centering
+\begin{minipage}[t]{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{./images/pantalla_alta_edicion_005.png}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{./images/pantalla_alta_edicion_006.png}
+\end{minipage}
+\begin{minipage}[t]{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{./images/pantalla_alta_edicion_007.png}
+\end{minipage}
+\caption{Pantalla de edición de item, diálogo de cancelación de edición y pantlla de la cámara con botones para acceso a la galería, encender el flash y estado del zoom. Responsable principal: Santiago Atienza Ferro}
+\end{figure}
+```
 
 ## Pantalla de estadísticas
 
@@ -324,7 +419,11 @@ Para el desarrollo y prueba de esta funcionalidad se han utilizado datos de demo
 
 Finalmente, se incluye un resumen automático generado a partir de los datos, que destaca los aspectos más relevantes de la colección, como la colección predominante (asociada a un continente), el porcentaje de piezas documentadas fotográficamente o el tipo de pieza que tiene mayor peso en el conjunto. Este resumen añade valor interpretativo y evita que la pantalla se limite a mostrar números sueltos sin contexto.
 
+[Pantalla de estadísticas. Responsable principal: María Colina Lorda.](./images/pantalla_estadisticas_01.png)
+
 # Diseño técnico y arquitectura
+
+![Arquitectura de capas implementada en NumisPocket](./images/memoria_arquitectura_capas.png)
 
 La arquitectura elegida para NumisPocket responde a un principio de claridad antes que de sofisticación. Dado el tamaño del proyecto y el objetivo académico del mismo, se descartaron estructuras excesivamente complejas y se optó por una organización en capas, suficientemente ordenada para facilitar mantenimiento, integración y defensa técnica.
 
@@ -335,6 +434,7 @@ La lógica de aplicación se implementa principalmente dentro de los componentes
 Finalmente, la capa de acceso a datos se apoya en SQLite y Drizzle ORM para encapsular el esquema, las operaciones básicas y las consultas agregadas necesarias para el listado y la pantalla de estadísticas.
 
 ## Tecnologías empleadas
+
 | Tecnología            | Rol en el proyecto                 | Justificación de uso                                                                                                     |
 | --------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | React Native con Expo | Framework móvil multiplataforma    | Permite construir una app moderna con una única base de código y simplifica el despliegue y las pruebas en dispositivos. |
