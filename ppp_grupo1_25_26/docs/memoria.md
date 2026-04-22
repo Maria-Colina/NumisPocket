@@ -675,23 +675,39 @@ El control de calidad no se limitó a comprobar si la aplicación arrancaba. Tam
 
 Ningún proyecto real se desarrolla de forma completamente lineal, y NumisPocket no fue una excepción. A lo largo del proceso surgieron distintos contratiempos de complejidad media que obligaron a revisar decisiones iniciales. Lejos de considerarse un problema negativo, estas incidencias se trataron como una parte natural del aprendizaje y como oportunidades para mejorar la calidad del producto final.
 
-Las principales incidencias fueron tres: el comportamiento de las imágenes almacenadas en caché, la necesidad de optimizar visualmente el listado cuando se cargaban suficientes registros y la dificultad de obtener estadísticas significativas con pocos datos. Cada una de ellas exigió una respuesta específica.
 
-## Pérdida de imágenes al reiniciar la aplicación
+## Incidencias  
+Las principales incidencias fueron cuatro: el comportamiento de las imágenes almacenadas en caché, la necesidad de optimizar visualmente el listado cuando se cargaban suficientes registros, discrepancias en funcionalidades de iOS y Android y la dificultad de obtener estadísticas significativas con pocos datos. Cada una de ellas exigió una respuesta específica.
+
+### Pérdida de imágenes al reiniciar la aplicación
 
 Este fue el contratiempo más relevante del proyecto. Durante una fase temprana se almacenó en base de datos la URI devuelta por Expo ImagePicker sin copiar el archivo a una ubicación permanente. La prueba funcionaba aparentemente bien hasta que se reiniciaba la aplicación, momento en el que algunas rutas dejaban de ser válidas. La solución consistió en incorporar expo-file-system y copiar los archivos a FileSystem.documentDirectory antes de persistir la referencia.
 
-## Rendimiento visual del listado
+### Rendimiento visual del listado
 
 Con pocos registros el listado se comportaba de forma impecable, pero al poblar la base con datos de ejemplo para pruebas se detectó que una lista no optimizada podía penalizar la sensación de fluidez. Se sustituyó la aproximación inicial por una lista adaptada a renderización eficiente y se simplificó el contenido de las tarjetas para mantener un equilibrio entre detalle y rendimiento.
 
-## Poca significatividad de las estadísticas con muestras pequeñas
+### Discrepancias en funcionalidades entre sistemas operativos
+
+La selección del tipo de item en la pantalla de de edición inicialmente iba realizarse con un `Alert` que contuviera la lista de los tipos. Al realizar las pruebas en iOS y Android para validar el PR el equipo se dio cuenta de que en Android no aparecían todos los elementos que contenía la lista. Tras varias pesquisas se averiguó que en éste sistema el contenido que puede mostrarse en un `Alert` es límitado. Por ello se tomo la decisión de mostrar esa lista con un modal.
+
+### Poca significatividad de las estadísticas con muestras pequeñas
 
 La pantalla de estadísticas necesitaba datos suficientes para resultar convincente. Cuando solo existían unas pocas piezas, algunos gráficos eran poco expresivos. Para la fase de desarrollo y validación se generaron datos de demostración que permitieron observar la pantalla en un escenario más realista. La implementación final, en cualquier caso, se alimenta exclusivamente de la base de datos local y funciona de manera dinámica con las piezas introducidas por el usuario.
 
 ##  Ajustes de alcance y prudencia técnica
 
-Durante la última semana de trabajo se valoró incorporar mejoras adicionales, como una pantalla de perfil o exportación de datos. Sin embargo, aplicando un criterio de calidad y de gestión del riesgo, el equipo decidió priorizar la estabilidad del núcleo del proyecto. Esta decisión evitó introducir deuda técnica de última hora y permitió dedicar más tiempo al pulido visual y a la documentación.
+
+Durante el desarrollo se tomaron decisiones que ajustaron el alcance del proyecto para mantenerlo dentro de los objetivos marcados.
+La primera decisión fue la de mantener una única colección para la primera versión. Pese a que es un punto importante el diseño y desarrollo de la gestión de las colecciones como tales quedaba fuera de los objetivos marcados en el anteproyecto por lo que en previsión de un desarrollo futuro se mantuvo la tabla de colecciones y su relación con los items.
+
+Adicionalmente valoró incorporar mejoras adicionales, tales como: 
+- pantalla de onboarding: se le pregunta al usuario su nombre y su email. Además se le daría la opción de decidir si querría que se cargaran los datos de demostración o no.
+- una pantalla de perfil.
+- los dos puntos anteriores necesitan una tabla de ajustes que fue creada pero actualmente no se utiliza.
+- exportación de datos. 
+ 
+Sin embargo, aplicando un criterio de calidad y de gestión del riesgo, el equipo decidió priorizar la estabilidad del núcleo del proyecto. Esta decisión evitó introducir deuda técnica de última hora y permitió dedicar más tiempo al pulido visual y a la documentación.
 
 # Resultados obtenidos y valoración técnica
 
@@ -738,3 +754,75 @@ Junta de Andalucia. (s. f.). _Guia del título de Técnico Superior en Desarroll
 Universidad Politécnica de Madrid, & Universidad de Salamanca. (s. f.). _Memorias técnicas universitarias_ [Material de consulta].
 
 Wikipedia contributors. (s. f.). _Grado de conservación de las monedas_. _Wikipedia, The Free Encyclopedia_. Recuperado el 22 de abril de 2026, de [Wikipedia](https://es.wikipedia.org/wiki/Grado_de_conservaci%C3%B3n_de_las_monedas)
+
+# Anexo I - Diagrama de clases
+
+```{.mermaid caption="Diagrama de clases"}
+classDiagram
+    class AJUSTES {
+        +int id
+        +string nombre_ajuste
+        +string valor
+    }
+
+    class COLECCIONES {
+        +int id
+        +string nombre
+        +string descripcion
+        +int fecha_creacion
+        +int activa
+    }
+
+    class ESTADOS_CONSERVACION {
+        +int id
+        +string codigo
+        +string nombre
+        +string descripcion
+        +int orden
+        +int activo
+    }
+
+    class TIPOS_ITEMS {
+        +int id
+        +string codigo
+        +string nombre
+        +string descripcion
+        +int orden
+        +int activo
+    }
+
+    class PIEZAS {
+        +int id
+        +int coleccion_id
+        +string tipo
+        +int tipo_item_id
+        +string titulo
+        +string pais
+        +int anio
+        +string catalogo_ref
+        +string valor_facial
+        +string material
+        +int estado_conservacion_id
+        +string rareza
+        +int cantidad
+        +int tiene_error
+        +string observaciones
+        +int fecha_alta
+        +int fecha_actualizacion
+    }
+
+    class FOTOS_PIEZA {
+        +int id
+        +int pieza_id
+        +string uri_local
+        +string origen
+        +string descripcion
+        +int es_principal
+        +int fecha_captura
+    }
+
+    COLECCIONES "1" -- "0..*" PIEZAS : coleccion_id
+    TIPOS_ITEMS "1" -- "0..*" PIEZAS : tipo_item_id
+    ESTADOS_CONSERVACION "1" -- "0..*" PIEZAS : estado_conservacion_id
+    PIEZAS "1" -- "0..*" FOTOS_PIEZA : pieza_id
+```
