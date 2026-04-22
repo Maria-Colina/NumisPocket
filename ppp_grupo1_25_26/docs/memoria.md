@@ -24,6 +24,7 @@ header-includes:
     - \usepackage{calc}
     - \newcounter{none}
     - \usepackage{lscape}
+    - \usepackage{placeins}
     - \usepackage{xurl}
     - \Urlmuskip=0mu plus 1mu
 ---
@@ -225,12 +226,6 @@ Justificación: La correcta estructuración previa del sistema permitió reducir
 
 Conclusión: El proyecto presenta una desviación moderada, considerada aceptable en entornos de desarrollo reales, especialmente en proyectos con integración de múltiples tecnologías.
 
-
-\newpage
-```{=latex}
-\begin{landscape}
-```
-
 ## Distribución del trabajo entre integrantes
 
 | Integrante                   | Responsabilidad principal                 | Tareas de apoyo                                    | Evidencias asociadas                                            |
@@ -239,10 +234,7 @@ Conclusión: El proyecto presenta una desviación moderada, considerada aceptabl
 | Santiago Atienza Ferro       | Alta/edición, validaciones y multimedia   | Modelo de datos y persistencia. Defensa.           | Formulario, gestión de imágenes, borrado y sincronía con BD     |
 | María Colina Lorda           | Estadísticas, integración y control final | Pruebas, documentación.                            | Indicadores, gráficos, resumen automático e integración general |
 
-```{=latex}
-\end{landscape}
-```
-\newpage
+
 
 # Análisis de requisitos
 
@@ -358,6 +350,9 @@ Esta necesidad se consideró prioritaria porque conecta con uno de los objetivos
 \caption{Pantallas de listado y filtrado de NumisPocket.}
 \end{figure}
 ```
+```{=latex}
+\FloatBarrier
+```
 
 ##  Pantalla de alta y edición
 
@@ -388,8 +383,6 @@ Se organizaron los campos en un orden lógico: primero identificación general d
 \end{figure}
 ```
 
-La eliminación de registros se integró con confirmación para evitar borrados accidentales. Asimismo, se aplicaron validaciones sobre campos imprescindibles, especialmente nombre o título, tipo y año, de manera que no pudieran guardarse registros manifiestamente incompletos o incoherentes.
-
 ```{=latex}
 \begin{figure}[htbp]
 \centering
@@ -409,6 +402,12 @@ La eliminación de registros se integró con confirmación para evitar borrados 
 \end{figure}
 ```
 
+```{=latex}
+\FloatBarrier
+```
+
+La eliminación de registros se integró con confirmación para evitar borrados accidentales. Asimismo, se aplicaron validaciones sobre campos imprescindibles, especialmente nombre o título, tipo y año, de manera que no pudieran guardarse registros manifiestamente incompletos o incoherentes.
+
 ## Pantalla de estadísticas
 
 La pantalla de estadísticas de la aplicación NumisPocket tiene como objetivo ofrecer una visión general clara y visual de la colección del usuario. Para ello, se muestran indicadores clave como el número total de piezas, el número de piezas con imagen y la diversidad geográfica, entendida como el número de países representados en la base de datos.
@@ -419,7 +418,16 @@ Para el desarrollo y prueba de esta funcionalidad se han utilizado datos de demo
 
 Finalmente, se incluye un resumen automático generado a partir de los datos, que destaca los aspectos más relevantes de la colección, como la colección predominante (asociada a un continente), el porcentaje de piezas documentadas fotográficamente o el tipo de pieza que tiene mayor peso en el conjunto. Este resumen añade valor interpretativo y evita que la pantalla se limite a mostrar números sueltos sin contexto.
 
-[Pantalla de estadísticas. Responsable principal: María Colina Lorda.](./images/pantalla_estadisticas_01.png)
+```{=latex}
+\begin{figure}[htbp]
+\centering
+\begin{minipage}[t]{0.32\textwidth}
+\centering
+\includegraphics[width=\linewidth]{./images/pantalla_estadisticas_01.png}
+\end{minipage}\hfill
+\caption{Pantalla de estadísticas. Responsable principal: María Colina Lorda.}
+\end{figure}
+```
 
 # Diseño técnico y arquitectura
 
@@ -714,7 +722,8 @@ La principal conclusión técnica es que, incluso en proyectos académicos de ta
 Como líneas futuras razonables se plantean la creación de un perfil de usuario completo, la exportación de datos, la posibilidad de mantener varias colecciones, una mejora de los filtros avanzados, la sincronización opcional en la nube y la inclusión de un catálogo base de países o series numismáticas. Todas estas mejoras serían compatibles con la arquitectura actual, aunque exigirían ampliar el alcance del proyecto.
 
 # Bibliografía y referencias
-Artiles Gonzalez, J. D., Atienza Ferro, S., & Colina Lorda, M. (2026, 29 marzo). _Gestor de colecciones numismaticas_ [Anteproyecto no publicado]. CIFP Cesar Manrique.
+
+Artiles González, J. D., Atienza Ferro, S., & Colina Lorda, M. (2026, 29 marzo). _Gestor de colecciones numismáticas_ [Anteproyecto no publicado]. CIFP César Manrique.
 
 Drizzle Team. (s. f.). _Drizzle ORM with Expo SQLite_. https://orm.drizzle.team/docs/connect-expo-sqlite
 
@@ -722,10 +731,10 @@ Expo. (s. f.-a). _FileSystem (expo-file-system)_. Expo Documentation. [docs.expo
 
 Expo. (s. f.-b). _ImagePicker (expo-image-picker)_. Expo Documentation. [docs.expo.dev/imagepicker](https://docs.expo.dev/versions/latest/sdk/imagepicker/)
 
-Fabrica Nacional de Moneda y Timbre. (s. f.). _Guia de iniciacion al coleccionismo de monedas_. [www.fnmt.es](https://www.fnmt.es/documents/10179/38801/Guia_del_coleccionista.pdf/7da61ed7-0e82-48e6-8541-b72087559ef2)
+Fabrica Nacional de Moneda y Timbre. (s. f.). _Guia de iniciación al coleccionismo de monedas_. [www.fnmt.es](https://www.fnmt.es/documents/10179/38801/Guia_del_coleccionista.pdf/7da61ed7-0e82-48e6-8541-b72087559ef2)
 
-Junta de Andalucia. (s. f.). _Guia del titulo de Tecnico Superior en Desarrollo de Aplicaciones Multiplataforma (DAM): Directrices sobre el modulo de Proyecto y su caracter integrador_.
+Junta de Andalucia. (s. f.). _Guia del título de Técnico Superior en Desarrollo de Aplicaciones Multiplataforma (DAM): Directrices sobre el modulo de Proyecto y su carácter integrador_.
 
-Universidad Politecnica de Madrid, & Universidad de Salamanca. (s. f.). _Memorias tecnicas universitarias_ [Material de consulta].
+Universidad Politécnica de Madrid, & Universidad de Salamanca. (s. f.). _Memorias técnicas universitarias_ [Material de consulta].
 
-Wikipedia contributors. (s. f.). _Grado de conservacion de las monedas_. _Wikipedia, The Free Encyclopedia_. Recuperado el 22 de abril de 2026, de [Wikipedia](https://es.wikipedia.org/wiki/Grado_de_conservaci%C3%B3n_de_las_monedas)
+Wikipedia contributors. (s. f.). _Grado de conservación de las monedas_. _Wikipedia, The Free Encyclopedia_. Recuperado el 22 de abril de 2026, de [Wikipedia](https://es.wikipedia.org/wiki/Grado_de_conservaci%C3%B3n_de_las_monedas)
