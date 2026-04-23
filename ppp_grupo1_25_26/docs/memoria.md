@@ -6,7 +6,7 @@ logo-width: 10cm
 title: "Memoria final de Proyecto"
 titlepage-left: 5.4cm
 titlepage-rule-width: 1.36\textwidth
-subtitle: "Numispocket - Aplicación móvil para la gestión de colecciones numismáticas"
+subtitle: "NumisPocket - Aplicación móvil para la gestión de colecciones numismáticas"
 author: [ José Daniel Artiles González, Santiago Atienza Ferro, María Colina Lorda]
 keywords: [React, Expo, Drizzle, PPP, DAM ] 
 date: '\today' 
@@ -244,7 +244,7 @@ Conclusión: El proyecto presenta una desviación moderada, considerada aceptabl
 - RF-02: El sistema deberá permitir editar todos los campos de una pieza ya registrada.
 - RF-03: El sistema deberá permitir eliminar una pieza previa confirmación explícita del usuario.
 - RF-04: El sistema deberá mostrar un listado general de piezas almacenadas en la base de datos.
-- RF-05: El sistema deberá ofrecer búsqueda por texto y posibilidad de distinguir piezas con o sin imagen
+- RF-05: El sistema deberá ofrecer búsqueda por texto y filtros que permitan distinguir piezas con y sin imagen.
 - RF-06: El sistema deberá permitir asociar una imagen a una pieza a partir de cámara o galería.
 - RF-07: El sistema deberá mantener válidas las rutas de las imágenes entre sesiones de uso.
 - RF-08: El sistema deberá calcular y mostrar indicadores estadísticos de la colección.
@@ -294,7 +294,7 @@ Los casos de uso más importantes son consultar la colección, buscar y filtrar 
 
 El diseño funcional se elaboró con un criterio de sencillez operativa. La aplicación no debía exigir aprendizaje previo: el usuario debía poder abrirla, identificar la pantalla principal, consultar piezas y crear nuevas fichas con el menor número posible de pasos. Para conseguirlo se optó por una navegación corta, con tres pantallas principales y algunas acciones auxiliares integradas dentro del propio flujo.
 
-El uso de tarjetas, botones visibles y formularios lineales ayuda a reducir la carga cognitiva. La aplicación se apoya en etiquetas claras, jerarquías tipográficas marcadas y bloques bien diferenciados. Esta decisión no es únicamente estética; tiene un impacto directo en la usabilidad durante la demostración y en la comprensión del producto por parte del las personas usuarias.
+El uso de tarjetas, botones visibles y formularios lineales ayuda a reducir la carga cognitiva. La aplicación se apoya en etiquetas claras, jerarquías tipográficas marcadas y bloques bien diferenciados. Esta decisión no es únicamente estética; tiene un impacto directo en la usabilidad durante la demostración y en la comprensión del producto por parte de las personas usuarias.
 
 # Diagrama de navegación
 
@@ -332,7 +332,7 @@ La pantalla de listado actúa como pantalla de inicio de la aplicación. Su fina
 
 Cada tarjeta muestra información esencial de la pieza: título, país, año, valor facial, tipo y disponibilidad de fotografía. La información se presenta en formato compacto para permitir la revisión de varias piezas de un vistazo, pero manteniendo un nivel suficiente de detalle como para diferenciar registros sin necesidad de abrir cada ficha.
 
-Desde el punto de vista de experiencia de usuario, el filtro por tipo y por disponibilidad de imagen resulta especialmente útil. En una colección mediana, el usuario puede querer localizar rápidamente billetes, monedas o piezas que aún no están documentadas fotográficamente. 
+Desde el punto de vista de la experiencia de usuario, el filtro por tipo y por disponibilidad de imagen resulta especialmente útil. En una colección mediana, el usuario puede querer localizar rápidamente billetes, monedas o piezas que aún no están documentadas fotográficamente. 
 
 Esta necesidad se consideró prioritaria porque conecta con uno de los objetivos prácticos del proyecto: utilizar la aplicación también como herramienta de revisión y mejora de la colección.
 
@@ -379,7 +379,7 @@ Se organizaron los campos en un orden lógico: primero identificación general d
 \centering
 \includegraphics[width=\linewidth]{./images/pantalla_alta_edicion_004.png}
 \end{minipage}
-\caption{Pantalla de nuevo item y modales de Tipo de item y de Estado de conservación. Responsable principal: José Daniel Artiles González}
+\caption{Pantalla de nuevo ítem y modales de Tipo de item y de Estado de conservación. Responsable principal: José Daniel Artiles González}
 \end{figure}
 ```
 
@@ -398,7 +398,7 @@ Se organizaron los campos en un orden lógico: primero identificación general d
 \centering
 \includegraphics[width=\linewidth]{./images/pantalla_alta_edicion_007.png}
 \end{minipage}
-\caption{Pantalla de edición de item, diálogo de cancelación de edición y pantlla de la cámara con botones para acceso a la galería, encender el flash y estado del zoom. Responsable principal: Santiago Atienza Ferro}
+\caption{Pantalla de edición de ítem, diálogo de cancelación de edición y pantlla de la cámara con botones para acceso a la galería, encender el flash y estado del zoom. Responsable principal: Santiago Atienza Ferro}
 \end{figure}
 ```
 
@@ -527,7 +527,7 @@ erDiagram
 
 El modelado de datos se definió con el objetivo de cubrir correctamente el caso de uso principal sin introducir una complejidad innecesaria. Se decidió separar la información de las colecciones, las piezas y las fotografías asociadas, manteniendo la posibilidad de ampliar el sistema en el futuro sin tener que rediseñar desde cero la base de datos.
 
-La entidad central es la tabla de piezas. En ella se registran atributos como tipo, título, país, año, valor facial, material, estado de conservación, rareza, cantidad, indicador de error y observaciones. A su alrededor se articulan las demás entidades: colecciones, que agrupan piezas; fotos_pieza, que contempla la posibilidad de asociar varias imágenes a cada registro a nivel de modelo de datos, aunque en la versión actual se utiliza una única imagen por pieza ; y perfil_usuario, contemplada como ampliación razonable para futuras versiones.
+La entidad central es la tabla de piezas. En ella se registran atributos como tipo, título, país, año, valor facial, material, estado de conservación, rareza, cantidad, indicador de error y observaciones. A su alrededor se articulan las demás entidades: colecciones, que agrupan piezas, y fotos_pieza, que contempla la posibilidad de asociar varias imágenes a cada registro a nivel de modelo de datos, aunque en la versión actual se utiliza funcionalmente una única imagen principal por pieza.
 
 Las estadísticas no se almacenan en una tabla específica, ya que se calculan de forma dinámica mediante consultas agregadas sobre piezas y fotos_pieza. Esta decisión evita redundancias y garantiza que los indicadores visibles en la aplicación reflejen siempre el estado real de la base de datos.
 
@@ -689,7 +689,7 @@ Con pocos registros el listado se comportaba de forma impecable, pero al poblar 
 
 ### Discrepancias en funcionalidades entre sistemas operativos
 
-La selección del tipo de item en la pantalla de de edición inicialmente iba realizarse con un `Alert` que contuviera la lista de los tipos. Al realizar las pruebas en iOS y Android para validar el PR el equipo se dio cuenta de que en Android no aparecían todos los elementos que contenía la lista. Tras varias pesquisas se averiguó que en éste sistema el contenido que puede mostrarse en un `Alert` es límitado. Por ello se tomo la decisión de mostrar esa lista con un modal.
+La selección del tipo de ítem en la pantalla de edición iba a realizarse inicialmente mediante un `Alert` que mostrara la lista de tipos disponibles. Durante las pruebas realizadas en iOS y Android, el equipo detectó que en Android no se mostraban correctamente todos los elementos de la lista. Tras revisar este comportamiento, se comprobó que el contenido que puede presentarse en un `Alert` en ese sistema es limitado. Por ello, se tomó la decisión de sustituir esa solución por un modal, que ofrecía un comportamiento más estable y predecible en ambos sistemas.
 
 ### Poca significatividad de las estadísticas con muestras pequeñas
 
