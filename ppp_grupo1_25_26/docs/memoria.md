@@ -262,29 +262,7 @@ Conclusión: El proyecto presenta una desviación moderada, considerada aceptabl
 
 ## Casos de uso principales
 
-```{.mermaid caption="Casos de uso principales cubiertos por el sistema."}
-flowchart LR
-  U([Persona usuaria])
-
-  subgraph NP[NumisPocket]
-    UC1([Consultar colección])
-    UC2([Buscar y filtrar piezas])
-    UC3([Dar de alta pieza])
-    UC4([Editar pieza])
-    UC5([Eliminar pieza])
-    UC6([Asociar fotografía])
-    UC7([Visualizar estadísticas])
-  end
-
-  U --> UC1
-  U --> UC2
-  U --> UC3
-  U --> UC4
-  U --> UC5
-  U --> UC6
-  U --> UC7
-
-```
+[Ver diagrama Anexo V](#anexo-v---casos-de-uso)
 
 La persona usuaria, representada en el diagrama, interactúa con NumisPocket de forma directa y sencilla. No existe complejidad multirol ni jerarquía de permisos porque la aplicación se concibe como una herramienta personal instalada en el dispositivo.
 
@@ -295,36 +273,6 @@ Los casos de uso más importantes son consultar la colección, buscar y filtrar 
 El diseño funcional se elaboró con un criterio de sencillez operativa. La aplicación no debía exigir aprendizaje previo: el usuario debía poder abrirla, identificar la pantalla principal, consultar piezas y crear nuevas fichas con el menor número posible de pasos. Para conseguirlo se optó por una navegación corta, con tres pantallas principales y algunas acciones auxiliares integradas dentro del propio flujo.
 
 El uso de tarjetas, botones visibles y formularios lineales ayuda a reducir la carga cognitiva. La aplicación se apoya en etiquetas claras, jerarquías tipográficas marcadas y bloques bien diferenciados. Esta decisión no es únicamente estética; tiene un impacto directo en la usabilidad durante la demostración y en la comprensión del producto por parte de las personas usuarias.
-
-# Diagrama de navegación
-
-```{.mermaid caption="Diagrama de navegación principal de NumisPocket."}
-flowchart TD
-  A[Inicio de la app] --> B[Redirección inicial]
-  B --> C[(Tabs principales)]
-
-  subgraph T["Navegación principal"]
-    I[Inicio / listado]
-    N[Nueva pieza / edición]
-    S[Estadísticas]
-  end
-
-  C --> I
-  C --> N
-  C --> S
-
-  I -->|Abrir ficha| D[Detalle pieza]
-  I -->|Botón flotante| N
-  I -->|Pestaña inferior| S
-
-  D -->|router.replace| N
-
-  N -->|Guardar cambios| I
-  N -->|Cancelar o volver| I
-  N -->|Editar pieza existente| N
-
-  S -->|Volver a listado| I
-```
 
 ## Pantalla de listado y filtrado
 
@@ -455,76 +403,6 @@ Finalmente, la capa de acceso a datos se apoya en SQLite y Drizzle ORM para enca
 
 # Modelo de datos y persistencia
 
-```{.mermaid caption="Modelo entidad-relación"}
-erDiagram
-  AJUSTES {
-    int id PK
-    text nombre_ajuste UK
-    text valor
-  }
-
-  COLECCIONES {
-    int id PK
-    text nombre
-    text descripcion
-    int fecha_creacion
-    int activa
-  }
-
-  ESTADOS_CONSERVACION {
-    int id PK
-    text codigo UK
-    text nombre
-    text descripcion
-    int orden
-    int activo
-  }
-
-  TIPOS_ITEMS {
-    int id PK
-    text codigo UK
-    text nombre
-    text descripcion
-    int orden
-    int activo
-  }
-
-  PIEZAS {
-    int id PK
-    int coleccion_id
-    text tipo
-    int tipo_item_id FK
-    text titulo
-    text pais
-    int anio
-    text catalogo_ref
-    text valor_facial
-    text material
-    int estado_conservacion_id FK
-    text rareza
-    int cantidad
-    int tiene_error
-    text observaciones
-    int fecha_alta
-    int fecha_actualizacion
-  }
-
-  FOTOS_PIEZA {
-    int id PK
-    int pieza_id
-    text uri_local
-    text origen
-    text descripcion
-    int es_principal
-    int fecha_captura
-  }
-
-  COLECCIONES ||--o{ PIEZAS : "coleccion_id (REL IMPLICITA)"
-  TIPOS_ITEMS ||--o{ PIEZAS : "tipo_item_id"
-  ESTADOS_CONSERVACION ||--o{ PIEZAS : "estado_conservacion_id"
-  PIEZAS ||--o{ FOTOS_PIEZA : "pieza_id (REL IMPLICITA)"
-```
-
 El modelado de datos se definió con el objetivo de cubrir correctamente el caso de uso principal sin introducir una complejidad innecesaria. Se decidió separar la información de las colecciones, las piezas y las fotografías asociadas, manteniendo la posibilidad de ampliar el sistema en el futuro sin tener que rediseñar desde cero la base de datos.
 
 La entidad central es la tabla de piezas. En ella se registran atributos como tipo, título, país, año, valor facial, material, estado de conservación, rareza, cantidad, indicador de error y observaciones. A su alrededor se articulan las demás entidades: colecciones, que agrupan piezas, y fotos_pieza, que contempla la posibilidad de asociar varias imágenes a cada registro a nivel de modelo de datos, aunque en la versión actual se utiliza funcionalmente una única imagen principal por pieza.
@@ -583,58 +461,6 @@ Sin embargo, al reiniciar la aplicación se observó un problema importante: alg
 Para resolver el problema se integró la librería expo-file-system. La solución aplicada consistió en copiar cada imagen seleccionada desde la caché o desde la ruta temporal original a un directorio persistente de la aplicación, concretamente FileSystem.documentDirectory. Una vez copiado el archivo, la ruta persistente se almacena en SQLite y pasa a ser la referencia utilizada por la aplicación para mostrar la fotografía en sesiones posteriores.
 
 Este cambio tuvo un impacto directo en la robustez del sistema. Gracias a él, las fotografías quedan asociadas de forma estable a cada pieza, la base de datos mantiene referencias válidas y la experiencia de usuario mejora notablemente. Además, la solución es coherente con la documentación oficial de Expo, que describe expo-file-system como la biblioteca de acceso al sistema de archivos local del dispositivo, y con el uso de expo-image-picker para acceder a la interfaz del sistema que permite tomar o seleccionar fotografías.
-
-## Diagrama de secuencia: alta de una pieza con fotografía
-
-```{.mermaid caption="Secuencia de alta de una pieza con fotografía y persistencia estable de la imagen."}
-sequenceDiagram
-  autonumber
-  actor U as Usuario
-  participant F as Formulario Alta/Edición
-  participant IP as Expo ImagePicker
-  participant FS as Expo FileSystem
-  participant DB as SQLite (Drizzle)
-
-  U->>F: Abre "Nueva pieza" y completa campos
-  U->>F: Pulsa "Añadir foto"
-  F->>IP: Solicita permisos cámara/galería
-
-  alt Usuario concede permiso y selecciona imagen
-    IP-->>F: URI temporal
-    F->>FS: Copia archivo a documentDirectory
-    alt Copia correcta
-      FS-->>F: URI persistente
-      F-->>U: Vista previa de fotografía
-    else Error de copia
-      FS-->>F: Error de copia
-      F-->>U: Aviso y opción de reintentar
-    end
-  else Usuario deniega permiso o cancela selección
-    IP-->>F: Cancelado / sin imagen
-    F-->>U: Continúa alta sin fotografía
-  end
-
-  U->>F: Pulsa "Guardar"
-  F->>F: Validar campos obligatorios (tipo, título, año)
-  alt Validación correcta
-    F->>DB: INSERT en piezas (metadatos)
-    DB-->>F: id_pieza generado
-    alt Existe URI persistente
-      F->>DB: INSERT en fotos_pieza (id_pieza, uri_local)
-      DB-->>F: Confirmación OK
-    else Sin fotografía
-      F-->>F: Omitir inserción en fotos_pieza
-    end
-    F-->>U: Mensaje de éxito y retorno al listado
-  else Validación incorrecta
-    F-->>U: Mostrar errores en formulario
-  end
-
-  alt Error de base de datos
-    DB-->>F: Error al insertar
-    F-->>U: Aviso de error y opción de reintentar
-  end
-```
 
 ##  Valor añadido funcional de la fotografía
 
@@ -755,7 +581,9 @@ Universidad Politécnica de Madrid, & Universidad de Salamanca. (s. f.). _Memori
 
 Wikipedia contributors. (s. f.). _Grado de conservación de las monedas_. _Wikipedia, The Free Encyclopedia_. Recuperado el 22 de abril de 2026, de [Wikipedia](https://es.wikipedia.org/wiki/Grado_de_conservaci%C3%B3n_de_las_monedas)
 
-# Anexo I - Diagrama de clases
+# Anexos
+
+## I - Diagrama de clases
 
 ```{.mermaid caption="Diagrama de clases"}
 classDiagram
@@ -825,4 +653,183 @@ classDiagram
     TIPOS_ITEMS "1" -- "0..*" PIEZAS : tipo_item_id
     ESTADOS_CONSERVACION "1" -- "0..*" PIEZAS : estado_conservacion_id
     PIEZAS "1" -- "0..*" FOTOS_PIEZA : pieza_id
+```
+
+## Anexo II - Modelo Entidad -  Relación
+
+```{.mermaid caption="Modelo entidad-relación"}
+erDiagram
+  AJUSTES {
+    int id PK
+    text nombre_ajuste UK
+    text valor
+  }
+
+  COLECCIONES {
+    int id PK
+    text nombre
+    text descripcion
+    int fecha_creacion
+    int activa
+  }
+
+  ESTADOS_CONSERVACION {
+    int id PK
+    text codigo UK
+    text nombre
+    text descripcion
+    int orden
+    int activo
+  }
+
+  TIPOS_ITEMS {
+    int id PK
+    text codigo UK
+    text nombre
+    text descripcion
+    int orden
+    int activo
+  }
+
+  PIEZAS {
+    int id PK
+    int coleccion_id
+    text tipo
+    int tipo_item_id FK
+    text titulo
+    text pais
+    int anio
+    text catalogo_ref
+    text valor_facial
+    text material
+    int estado_conservacion_id FK
+    text rareza
+    int cantidad
+    int tiene_error
+    text observaciones
+    int fecha_alta
+    int fecha_actualizacion
+  }
+
+  FOTOS_PIEZA {
+    int id PK
+    int pieza_id
+    text uri_local
+    text origen
+    text descripcion
+    int es_principal
+    int fecha_captura
+  }
+
+  COLECCIONES ||--o{ PIEZAS : "coleccion_id (REL IMPLICITA)"
+  TIPOS_ITEMS ||--o{ PIEZAS : "tipo_item_id"
+  ESTADOS_CONSERVACION ||--o{ PIEZAS : "estado_conservacion_id"
+  PIEZAS ||--o{ FOTOS_PIEZA : "pieza_id (REL IMPLICITA)"
+```
+
+## Anexo III - Diagrama de secuencia: alta de una pieza con fotografía
+
+```{.mermaid caption="Secuencia de alta de una pieza con fotografía y persistencia estable de la imagen."}
+sequenceDiagram
+  autonumber
+  actor U as Usuario
+  participant F as Formulario Alta/Edición
+  participant IP as Expo ImagePicker
+  participant FS as Expo FileSystem
+  participant DB as SQLite (Drizzle)
+
+  U->>F: Abre "Nueva pieza" y completa campos
+  U->>F: Pulsa "Añadir foto"
+  F->>IP: Solicita permisos cámara/galería
+
+  alt Usuario concede permiso y selecciona imagen
+    IP-->>F: URI temporal
+    F->>FS: Copia archivo a documentDirectory
+    alt Copia correcta
+      FS-->>F: URI persistente
+      F-->>U: Vista previa de fotografía
+    else Error de copia
+      FS-->>F: Error de copia
+      F-->>U: Aviso y opción de reintentar
+    end
+  else Usuario deniega permiso o cancela selección
+    IP-->>F: Cancelado / sin imagen
+    F-->>U: Continúa alta sin fotografía
+  end
+
+  U->>F: Pulsa "Guardar"
+  F->>F: Validar campos obligatorios (tipo, título, año)
+  alt Validación correcta
+    F->>DB: INSERT en piezas (metadatos)
+    DB-->>F: id_pieza generado
+    alt Existe URI persistente
+      F->>DB: INSERT en fotos_pieza (id_pieza, uri_local)
+      DB-->>F: Confirmación OK
+    else Sin fotografía
+      F-->>F: Omitir inserción en fotos_pieza
+    end
+    F-->>U: Mensaje de éxito y retorno al listado
+  else Validación incorrecta
+    F-->>U: Mostrar errores en formulario
+  end
+
+  alt Error de base de datos
+    DB-->>F: Error al insertar
+    F-->>U: Aviso de error y opción de reintentar
+  end
+```
+
+## Anexo IV - Diagrama de navegación
+
+```{.mermaid caption="Diagrama de navegación principal de NumisPocket."}
+flowchart TD
+  A[Inicio de la app] --> B[Redirección inicial]
+  B --> C[(Tabs principales)]
+
+  subgraph T["Navegación principal"]
+    I[Inicio / listado]
+    N[Nueva pieza / edición]
+    S[Estadísticas]
+  end
+
+  C --> I
+  C --> N
+  C --> S
+
+  I -->|Abrir ficha| D[Detalle pieza]
+  I -->|Botón flotante| N
+  I -->|Pestaña inferior| S
+
+  D -->|router.replace| N
+
+  N -->|Guardar cambios| I
+  N -->|Cancelar o volver| I
+  N -->|Editar pieza existente| N
+
+  S -->|Volver a listado| I
+```
+
+## Anexo V - Casos de uso
+```{.mermaid caption="Casos de uso principales cubiertos por el sistema."}
+flowchart LR
+  U([Persona usuaria])
+
+  subgraph NP[NumisPocket]
+    UC1([Consultar colección])
+    UC2([Buscar y filtrar piezas])
+    UC3([Dar de alta pieza])
+    UC4([Editar pieza])
+    UC5([Eliminar pieza])
+    UC6([Asociar fotografía])
+    UC7([Visualizar estadísticas])
+  end
+
+  U --> UC1
+  U --> UC2
+  U --> UC3
+  U --> UC4
+  U --> UC5
+  U --> UC6
+  U --> UC7
+
 ```
